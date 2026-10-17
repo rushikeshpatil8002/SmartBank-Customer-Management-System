@@ -373,6 +373,3 @@ OK (26 passed, 0 failures, 0 errors)
 
 ---
 
-## 12. License
-
-This project is open-source under the [MIT License](LICENSE).
