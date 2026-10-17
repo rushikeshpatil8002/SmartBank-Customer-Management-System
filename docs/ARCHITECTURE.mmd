@@ -1,0 +1,39 @@
+flowchart TD
+    subgraph Client["Frontend Client (React + Vite + Bootstrap 5)"]
+        UI["React SPA Components / Views"]
+        AuthContext["Auth Context (JWT State & User Role)"]
+        AxiosClient["Axios Interceptors (Bearer Token & Auto Refresh)"]
+        UI --> AuthContext
+        AuthContext --> AxiosClient
+    end
+
+    subgraph API_Gateway["REST API Layer (Django REST Framework)"]
+        Urls["API Router & URLs (/api/v1/)"]
+        JWTAuth["JWT Authentication (djangorestframework-simplejwt)"]
+        Perms["Role-Based Permissions (IsAdminUser, IsStaff, IsCustomerOwner)"]
+        Serializers["Model Serializers (Validation & Serialization)"]
+        Urls --> JWTAuth
+        JWTAuth --> Perms
+        Perms --> Serializers
+    end
+
+    subgraph Business_Services["Core Business Logic & Services"]
+        TxService["Transaction Service (Atomic, Locking & Balance Check)"]
+        AccService["Account Service (Number Generation & Status)"]
+        AuditService["Audit Log Service"]
+        NotifService["In-App Notification Service"]
+        Serializers --> TxService
+        Serializers --> AccService
+        TxService --> AuditService
+        TxService --> NotifService
+    end
+
+    subgraph Data_Layer["Data & Persistence Layer"]
+        DjangoORM["Django ORM (Models & QuerySets)"]
+        PostgresDB[("PostgreSQL 18 Database (smartbank_db)")]
+        TxService --> DjangoORM
+        AccService --> DjangoORM
+        DjangoORM --> PostgresDB
+    end
+
+    AxiosClient -->|"HTTP JSON Requests (/api/v1/)"| Urls
